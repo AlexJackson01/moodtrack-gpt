@@ -9,6 +9,7 @@ import {
 import {useEffect} from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import TypeWriter from 'react-native-typewriter';
+import Sliders from '../components/moodInput/Sliders';
 
 const MoodInputScreen = ({navigation}) => {
   return (
@@ -23,9 +24,7 @@ const MoodInputScreen = ({navigation}) => {
           />
         </View>
 
-        <View style={styles.container}>
-          <Text>How are you feeling?</Text>
-        </View>
+        <Sliders navigation={navigation} />
       </SafeAreaView>
     </LinearGradient>
   );
@@ -37,12 +36,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  container: {
-    flex: 2,
-    backgroundColor: '#fff',
-    width: Dimensions.get('window').width - 50,
-    marginBottom: 50,
-  },
   logoContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -50,7 +43,7 @@ const styles = StyleSheet.create({
   logo: {
     height: 100,
     width: 100,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   title: {
     color: '#fff',
