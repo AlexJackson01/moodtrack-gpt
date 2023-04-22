@@ -1,34 +1,21 @@
-import { Image, StyleSheet, Text, View } from "react-native";
-import LinearGradient from 'react-native-linear-gradient';
-import TypeWriter from 'react-native-typewriter'
+import {Image, StyleSheet, Text, View} from 'react-native';
+import {useEffect} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import LandingScreen from './screens/LandingScreen';
+import MoodInputScreen from './screens/MoodInputScreen';
 
+const Stack = createNativeStackNavigator();
 
-
-        
 const App = () => {
-    return (
-        <LinearGradient colors={['#9155d4', '#5a6db7', '#198699']} style={styles.linearGradient}>
-            <Image source={require('./assets/images/Logo_splash.png')} style={styles.logo} />
-            <TypeWriter typing={1} style={styles.title}>MoodTrack</TypeWriter>
-        </LinearGradient>
-    );
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false}} />
+        <Stack.Screen name="MoodInput" component={MoodInputScreen} options={{ headerShown: false }} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
-
-const styles = StyleSheet.create({
-    linearGradient: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    logo: {
-        height: 200,
-        width: 200
-    },
-    title: {
-        color: '#fff',
-        position: 'absolute',
-        top: 288,
-    }
-})
 
 export default App;
