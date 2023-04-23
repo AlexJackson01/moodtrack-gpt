@@ -28,7 +28,7 @@ import TrackGPT from '../components/track/TrackGPT';
             />
           </View>
   
-        <TrackGPT />        
+        <TrackGPT sadHappy={sadHappy} stressedRelaxed={stressedRelaxed} tiredEnergetic={tiredEnergetic} />        
         </SafeAreaView>
       </LinearGradient>
     );

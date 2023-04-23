@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     title: {
         color: '#fff',
         position: 'absolute',
-        top: 279,
+        top: 292,
         fontSize: 24,
         fontFamily: 'Playlist Script'
     }
