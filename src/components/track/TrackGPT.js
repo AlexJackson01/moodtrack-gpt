@@ -1,4 +1,12 @@
-import {Dimensions, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  Image,
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {ActivityIndicator, Button} from 'react-native-paper';
 import TypeWriter from 'react-native-typewriter';
@@ -6,7 +14,8 @@ import {OPENAI_API_KEY} from '@env';
 const {Configuration, OpenAIApi} = require('openai');
 const extractUrls = require('extract-urls');
 import Video from 'react-native-video';
-import music from '../../assets/videos/music.mp4';
+import Music from '../../assets/videos/music.mp4';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 import {useState, useEffect} from 'react';
 
@@ -14,7 +23,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
   const [response, setResponse] = useState('');
   const [song, setSong] = useState('');
   const [reason, setReason] = useState('');
-  const [songLink, setSongLink] = useState('');
+  const [songLink, setSongLink] = useState(null);
 
   const generatePrompt = async () => {
     const configuration = new Configuration({
@@ -38,12 +47,8 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     console.log(completion);
     let res = completion.data.choices[0].text;
     let song = res.substring(res.indexOf('"') - 1, res.indexOf('.'));
-    let reason = res.substring(res.indexOf('.') + 1);
-    let songLink = song
-      .replaceAll('"', '')
-      .replaceAll("'", '')
-      .split(' ')
-      .join('-')
+    let reason = res.substring(res.indexOf('.') + 2);
+    let songLink = song.replaceAll('"', '').replaceAll("'", '').split(' ');
     console.log(songLink);
 
     setResponse(completion.data.choices[0].text);
@@ -51,6 +56,26 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     setReason(reason);
     setSongLink(songLink);
   };
+
+  
+  const [platforms, setPlatforms] = useState([
+    {
+      name: 'spotify',
+      link: `https://open.spotify.com/search/results/`,
+    },
+    {
+      name: 'apple',
+      link: `https://music.apple.com/us/search?term=`,
+    },
+    {
+      name: 'youtube-play',
+      link: `https://music.youtube.com/search?q=`,
+    },
+    {
+      name: 'amazon',
+      link: `https://music.amazon.co.uk/search/`,
+    },
+  ]);
 
   useEffect(() => {
     generatePrompt();
@@ -67,14 +92,23 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
       {response ? (
         <>
           <Video
-            source={music}
+            source={Music}
             paused={false}
             style={styles.video}
             repeat={true}
           />
           <Text style={styles.songTitle}>{song}</Text>
           <Text style={styles.songReason}>{reason}</Text>
-          <Text>Listen to this song here:</Text>
+          <Text>{songLink}</Text>
+          <Text>Listen to your MoodTrack here:</Text>
+
+        <View style={styles.platformContainer}>
+            {platforms.map((platform, i) => (
+              <TouchableOpacity key={i} onPress={() => Linking.openURL(`${platform.link}${songLink.join(' ')}`)}>
+                <Icon style={styles.platforms} name={platform.name} size={30} color='#9155d4' />
+              </TouchableOpacity>
+            ))}
+            </View>
         </>
       ) : (
         <ActivityIndicator animating={true} color="#9155d4" />
@@ -133,5 +167,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
+  platformContainer: {
+    paddingTop: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  platforms: {
+    margin: 10,
+    marginBottom: 5,
+    // justifyContent: 'space-evenly'
+  }
 });
 export default TrackGPT;
