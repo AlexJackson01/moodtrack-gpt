@@ -5,6 +5,9 @@ import TypeWriter from 'react-native-typewriter';
 import {OPENAI_API_KEY} from '@env';
 const {Configuration, OpenAIApi} = require('openai');
 const extractUrls = require('extract-urls');
+import Video from 'react-native-video';
+import music from '../../assets/videos/music.mp4'
+
 
 import {useState, useEffect} from 'react';
 
@@ -56,10 +59,18 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
         MoodTrack of the Day
       </TypeWriter>
 
+
+
       {/* {image && <Image source={{ uri: image[0]}} style={styles.songCover} />} */}
 
       {response ? (
         <>
+              <Video  
+            source={music}                 
+            paused={false}                  
+            style={styles.video}  
+            repeat={true}            
+        />
           <Text style={styles.songTitle}>{song}</Text>
           <Text style={styles.songReason}>{reason}</Text>
           <Text>Listen to this song here:</Text>
@@ -110,7 +121,16 @@ const styles = StyleSheet.create({
   songReason: {
     paddingTop: 20,
     textAlign: 'center',
-    paddingBottom: 20
+    paddingBottom: 20,
+    fontSize: 12,
+    fontStyle: 'italic'
   },
+  video: {
+    height: 50,
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20
+  }
 });
 export default TrackGPT;
