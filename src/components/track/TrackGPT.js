@@ -6,8 +6,7 @@ import {OPENAI_API_KEY} from '@env';
 const {Configuration, OpenAIApi} = require('openai');
 const extractUrls = require('extract-urls');
 import Video from 'react-native-video';
-import music from '../../assets/videos/music.mp4'
-
+import music from '../../assets/videos/music.mp4';
 
 import {useState, useEffect} from 'react';
 
@@ -15,6 +14,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
   const [response, setResponse] = useState('');
   const [song, setSong] = useState('');
   const [reason, setReason] = useState('');
+  const [songLink, setSongLink] = useState('');
 
   const generatePrompt = async () => {
     const configuration = new Configuration({
@@ -25,7 +25,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     const completion = await openai.createCompletion(
       {
         model: 'text-davinci-003',
-        prompt: `On a scale of 0 to 10, from sad to happy, I am ${sadHappy}. On a scale of 0 to 10, from stressed to relaxed, I am ${stressedRelaxed}. On a scale of 0 to 10, from tired to energetic, I am ${tiredEnergetic}. Recommend me a song based on my mood and tell me why you've recommended it.`,
+        prompt: `On a scale of 0 to 10, from sad to happy, I am ${sadHappy}. On a scale of 0 to 10, from stressed to relaxed, I am ${stressedRelaxed}. On a scale of 0 to 10, from tired to energetic, I am ${tiredEnergetic}. Recommend me a song based on my mood in the format: "Song Name" by Artist. Tell me why you've recommended it.`,
         max_tokens: 600,
       },
       {
@@ -37,16 +37,19 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     );
     console.log(completion);
     let res = completion.data.choices[0].text;
-    let song = res.substring(
-      res.indexOf('"') - 1 || res.indexOf("'") - 1,
-      res.indexOf('.'),
-    );
-    console.log(song);
+    let song = res.substring(res.indexOf('"') - 1, res.indexOf('.'));
     let reason = res.substring(res.indexOf('.') + 1);
+    let songLink = song
+      .replaceAll('"', '')
+      .replaceAll("'", '')
+      .split(' ')
+      .join('-')
+    console.log(songLink);
 
     setResponse(completion.data.choices[0].text);
     setSong(song);
     setReason(reason);
+    setSongLink(songLink);
   };
 
   useEffect(() => {
@@ -59,18 +62,16 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
         MoodTrack of the Day
       </TypeWriter>
 
-
-
       {/* {image && <Image source={{ uri: image[0]}} style={styles.songCover} />} */}
 
       {response ? (
         <>
-              <Video  
-            source={music}                 
-            paused={false}                  
-            style={styles.video}  
-            repeat={true}            
-        />
+          <Video
+            source={music}
+            paused={false}
+            style={styles.video}
+            repeat={true}
+          />
           <Text style={styles.songTitle}>{song}</Text>
           <Text style={styles.songReason}>{reason}</Text>
           <Text>Listen to this song here:</Text>
@@ -94,7 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    padding: 20
+    padding: 20,
   },
   greeting: {
     fontFamily: 'Playlist Script',
@@ -123,14 +124,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingBottom: 20,
     fontSize: 12,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   video: {
     height: 50,
     width: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20
-  }
+    marginBottom: 20,
+  },
 });
 export default TrackGPT;
