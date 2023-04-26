@@ -1,19 +1,20 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {Button} from 'react-native-paper';
-import TypeWriter from 'react-native-typewriter'
+import TypeWriter from 'react-native-typewriter';
 
 import {useState} from 'react';
 
-const Sliders = ({ navigation }) => {
-
-    const [sadHappy, setSadHappy] = useState(0)
-    const [stressedRelaxed, setStressedRelaxed] = useState(0)
-    const [tiredEnergetic, setTiredEnergetic] = useState(0)
+const Sliders = ({navigation}) => {
+  const [sadHappy, setSadHappy] = useState(0);
+  const [stressedRelaxed, setStressedRelaxed] = useState(0);
+  const [tiredEnergetic, setTiredEnergetic] = useState(0);
 
   return (
     <View style={styles.container}>
-      <TypeWriter typing={1} style={styles.greeting}>Hey [User!]</TypeWriter>
+      <TypeWriter typing={1} style={styles.greeting}>
+        Hey Alex!
+      </TypeWriter>
       <Text style={styles.moodHeading}>How are you feeling today?</Text>
 
       <Text style={styles.moodLabel}>Sad vs Happy</Text>
@@ -57,13 +58,15 @@ const Sliders = ({ navigation }) => {
 
       <Button
         mode="contained"
-        buttonColor='#9155d4'
+        buttonColor="#9155d4"
         style={styles.button}
-        onPress={() => {navigation.navigate('Track', {
+        onPress={() => {
+          navigation.navigate('Track', {
             sadHappy: sadHappy,
             stressedRelaxed: stressedRelaxed,
-            tiredEnergetic: tiredEnergetic
-        })}}>
+            tiredEnergetic: tiredEnergetic,
+          });
+        }}>
         Get Today's MoodTrack
       </Button>
     </View>
@@ -80,23 +83,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
+    shadowColor: 'black',
+    shadowOpacity: 1,
+    shadowOffset: {width: 2, height: 2},
+    shadowRadius: 10,
+    elevation: 8,
   },
   greeting: {
     fontFamily: 'Playlist Script',
     fontSize: 25,
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   moodHeading: {
     fontSize: 17,
-    paddingBottom: 30
+    paddingBottom: 30,
   },
   moodLabel: {
     fontStyle: 'italic',
-    fontSize: 10
+    fontSize: 12,
   },
   button: {
     borderRadius: 0,
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 export default Sliders;

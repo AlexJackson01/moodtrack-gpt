@@ -15,7 +15,7 @@ const {Configuration, OpenAIApi} = require('openai');
 const extractUrls = require('extract-urls');
 import Video from 'react-native-video';
 import Music from '../../assets/videos/music.mp4';
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {useState, useEffect} from 'react';
 
@@ -24,6 +24,25 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
   const [song, setSong] = useState('');
   const [reason, setReason] = useState('');
   const [songLink, setSongLink] = useState(null);
+  const [metadata, setMetadata] = useState({});
+  const [platforms, setPlatforms] = useState([
+    {
+      name: 'spotify',
+      link: `https://open.spotify.com/search/results/`,
+    },
+    {
+      name: 'apple',
+      link: `https://music.apple.com/us/search?term=`,
+    },
+    {
+      name: 'youtube-play',
+      link: `https://music.youtube.com/search?q=`,
+    },
+    {
+      name: 'amazon',
+      link: `https://music.amazon.co.uk/search/`,
+    },
+  ]);
 
   const generatePrompt = async () => {
     const configuration = new Configuration({
@@ -57,26 +76,6 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     setSongLink(songLink);
   };
 
-  
-  const [platforms, setPlatforms] = useState([
-    {
-      name: 'spotify',
-      link: `https://open.spotify.com/search/results/`,
-    },
-    {
-      name: 'apple',
-      link: `https://music.apple.com/us/search?term=`,
-    },
-    {
-      name: 'youtube-play',
-      link: `https://music.youtube.com/search?q=`,
-    },
-    {
-      name: 'amazon',
-      link: `https://music.amazon.co.uk/search/`,
-    },
-  ]);
-
   useEffect(() => {
     generatePrompt();
   }, []);
@@ -87,7 +86,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
         MoodTrack of the Day
       </TypeWriter>
 
-      {/* {image && <Image source={{ uri: image[0]}} style={styles.songCover} />} */}
+      {/* {metadata && <Image source={{ uri: metadata.image ? metadata.Image : metadata.imageURL }} style={styles.songCover} />} */}
 
       {response ? (
         <>
@@ -99,16 +98,24 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
           />
           <Text style={styles.songTitle}>{song}</Text>
           <Text style={styles.songReason}>{reason}</Text>
-          <Text>{songLink}</Text>
           <Text>Listen to your MoodTrack here:</Text>
 
-        <View style={styles.platformContainer}>
+          <View style={styles.platformContainer}>
             {platforms.map((platform, i) => (
-              <TouchableOpacity key={i} onPress={() => Linking.openURL(`${platform.link}${songLink.join(' ')}`)}>
-                <Icon style={styles.platforms} name={platform.name} size={30} color='#9155d4' />
+              <TouchableOpacity
+                key={i}
+                onPress={() =>
+                  Linking.openURL(`${platform.link}${songLink.join(' ')}`)
+                }>
+                <Icon
+                  style={styles.platforms}
+                  name={platform.name}
+                  size={30}
+                  color="#9155d4"
+                />
               </TouchableOpacity>
             ))}
-            </View>
+          </View>
         </>
       ) : (
         <ActivityIndicator animating={true} color="#9155d4" />
@@ -130,6 +137,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     textAlign: 'center',
     padding: 20,
+    shadowColor: 'black',
+    shadowOpacity: 1,
+    shadowOffset: {width: 2, height: 2},
+    shadowRadius: 10,
+    elevation: 8,
   },
   greeting: {
     fontFamily: 'Playlist Script',
@@ -168,16 +180,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   platformContainer: {
-    paddingTop: 20,
+    paddingTop: 10,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   platforms: {
     margin: 10,
     marginBottom: 5,
     // justifyContent: 'space-evenly'
-  }
+  },
 });
 export default TrackGPT;
