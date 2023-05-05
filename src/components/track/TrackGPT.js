@@ -81,7 +81,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     console.log(completion);
     let res = completion.data.choices[0].text;
     let song = res.replaceAll('"', '').substring(res.indexOf('"') - 1, res.indexOf('. ')).replaceAll('.', '');
-    let reason = res.substring(res.indexOf('.') + 2);
+    let reason = res.substring(res.indexOf(':') + 2);
     let songLink = song.replaceAll('"', '').replaceAll("'", '').split(' ');
     console.log(songLink);
 
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   greeting: {
     fontFamily: 'Playlist Script',
     fontSize: 25,
-    paddingBottom: 40,
+    paddingBottom: 20,
   },
   moodHeading: {
     fontSize: 17,
@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     fontStyle: 'italic',
+    paddingTop: 10
   },
   video: {
     height: 50,

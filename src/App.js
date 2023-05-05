@@ -3,18 +3,76 @@ import {useEffect} from 'react';
 import 'react-native-url-polyfill/auto';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {Provider as PaperProvider} from 'react-native-paper';
 import LandingScreen from './screens/LandingScreen';
 import MoodInputScreen from './screens/MoodInputScreen';
 import TrackScreen from './screens/TrackScreen';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const NavTabs = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName
+
+          if (route.name === 'Track') {
+            iconName = focused ? 'search' : 'search-outline'
+          } else if (route.name === 'Latest') {
+            iconName = focused ? 'musical-notes' : 'musical-notes-outline'
+          } else if (route.name === 'Resources') {
+            iconName = focused ? 'folder-sharp' : 'folder-outline'
+          } else if (route.name === 'Moods') {
+            iconName = focused ? 'bar-chart-sharp' : 'bar-chart-outline'
+          }
+
+          return <Icon name={iconName} size={size} color={color} />
+        },
+        tabBarActiveTintColor: '#8C52FF',
+        tabBarInactiveTintColor: 'gray'
+      })}
+    >
+      <Tab.Screen
+        name='Track'
+        options={{ headerShown: false }}
+        component={TrackScreen}
+      />
+      {/* <Tab.Screen
+        name='Latest'
+        options={{ headerShown: false }}
+        children={() => (
+          <LatestSongs
+            setUserId={setUserId}
+            userId={userId}
+            setUserName={setUserName}
+            userName={userName}
+          />
+        )}
+      />
+      <Tab.Screen
+        name='Moods'
+        options={{ headerShown: false }}
+        children={() => (
+          <Moods
+            userId={userId}
+            userName={userName}
+          />
+        )}
+      /> */}
+    </Tab.Navigator>
+  )
+}
 
 const App = () => {
   return (
     <NavigationContainer>
       <PaperProvider>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName='Landing'>
           <Stack.Screen
             name="Landing"
             component={LandingScreen}
@@ -25,11 +83,7 @@ const App = () => {
             component={MoodInputScreen}
             options={{headerShown: false}}
           />
-          <Stack.Screen
-            name="Track"
-            component={TrackScreen}
-            options={{headerShown: false}}
-          />
+          <Stack.Screen name="Tabs" options={{ headerShown: false}} component={NavTabs} />
         </Stack.Navigator>
       </PaperProvider>
     </NavigationContainer>

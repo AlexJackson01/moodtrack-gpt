@@ -61,10 +61,13 @@ const Sliders = ({navigation}) => {
         buttonColor="#9155d4"
         style={styles.button}
         onPress={() => {
-          navigation.navigate('Track', {
+          navigation.navigate('Tabs', {
+            screen: 'Track',
+            params: {
             sadHappy: sadHappy,
             stressedRelaxed: stressedRelaxed,
             tiredEnergetic: tiredEnergetic,
+            }
           });
         }}>
         Get Today's MoodTrack
