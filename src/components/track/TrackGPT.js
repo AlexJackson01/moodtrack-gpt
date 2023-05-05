@@ -10,12 +10,17 @@ import {
 import Slider from '@react-native-community/slider';
 import {ActivityIndicator, Button} from 'react-native-paper';
 import TypeWriter from 'react-native-typewriter';
-import {OPENAI_API_KEY} from '@env';
+import {OPENAI_API_KEY, CLIENT_ID, CLIENT_SECRET} from '@env';
 const {Configuration, OpenAIApi} = require('openai');
+import axios from 'axios';
 const extractUrls = require('extract-urls');
 import Video from 'react-native-video';
 import Music from '../../assets/videos/music.mp4';
 import Icon from 'react-native-vector-icons/FontAwesome';
+const qs = require('qs');
+import { Buffer } from "buffer";
+
+
 
 import {useState, useEffect} from 'react';
 
@@ -24,7 +29,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
   const [song, setSong] = useState('');
   const [reason, setReason] = useState('');
   const [songLink, setSongLink] = useState(null);
-  const [metadata, setMetadata] = useState({});
+  const [songImg, setSongImg] = useState('');
   const [platforms, setPlatforms] = useState([
     {
       name: 'spotify',
@@ -44,16 +49,26 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     },
   ]);
 
+  const auth_token = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`, 'utf-8').toString('base64');
+
+  useEffect(() => {
+    generatePrompt();
+  }, []);
+
   const generatePrompt = async () => {
     const configuration = new Configuration({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: OPENAI_API_KEY,
     });
     const openai = new OpenAIApi(configuration);
 
     const completion = await openai.createCompletion(
       {
         model: 'text-davinci-003',
-        prompt: `On a scale of 0 to 10, from sad to happy, I am ${sadHappy}. On a scale of 0 to 10, from stressed to relaxed, I am ${stressedRelaxed}. On a scale of 0 to 10, from tired to energetic, I am ${tiredEnergetic}. Recommend me a song based on my mood in the format: "Song Name" by Artist. Tell me why you've recommended it.`,
+        prompt: `On a scale of 0 to 10, from sad to happy, I am ${sadHappy}. On a scale of 0 to 10, from stressed to relaxed, I am ${stressedRelaxed}. On a scale of 0 to 10, from tired to energetic, I am ${tiredEnergetic}. Recommend me a song based on my mood and tell me why you've recommended it in the following format: 
+        
+        "Song Name" by Artist. 
+        Reason.
+        `,
         max_tokens: 600,
       },
       {
@@ -65,7 +80,7 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     );
     console.log(completion);
     let res = completion.data.choices[0].text;
-    let song = res.substring(res.indexOf('"') - 1, res.indexOf('.'));
+    let song = res.replaceAll('"', '').substring(res.indexOf('"') - 1, res.indexOf('. ')).replaceAll('.', '');
     let reason = res.substring(res.indexOf('.') + 2);
     let songLink = song.replaceAll('"', '').replaceAll("'", '').split(' ');
     console.log(songLink);
@@ -74,11 +89,36 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     setSong(song);
     setReason(reason);
     setSongLink(songLink);
+
+    findAlbumCover(song);
   };
 
-  useEffect(() => {
-    generatePrompt();
-  }, []);
+
+  const findAlbumCover = async (song) => {
+
+    const data = qs.stringify({'grant_type': 'client_credentials'})    
+    const res = await axios.post('https://accounts.spotify.com/api/token', data, {
+      headers: {
+        'Authorization': `Basic ${auth_token}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+    })
+
+    const res2 = await axios.get('https://api.spotify.com/v1/search', {
+      headers: {
+        Authorization: `Bearer ${res.data.access_token}`
+      },
+      params: {
+        type: 'album',
+        q: song,
+        limit: 1
+      }
+    })
+
+    setSongImg(res2.data.albums.items[0].images[0])
+    console.log(songImg)
+  }
+
 
   return (
     <View style={styles.container}>
@@ -88,16 +128,17 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
 
       {/* {metadata && <Image source={{ uri: metadata.image ? metadata.Image : metadata.imageURL }} style={styles.songCover} />} */}
 
-      {response ? (
+      {songImg ? (
         <>
+          <Image source={{ uri: songImg.url}} style={{width: 100, height: 100}} />
+          <Text style={styles.songTitle}>{song}</Text>
+          <Text style={styles.songReason}>{reason}</Text>
           <Video
             source={Music}
             paused={false}
             style={styles.video}
             repeat={true}
           />
-          <Text style={styles.songTitle}>{song}</Text>
-          <Text style={styles.songReason}>{reason}</Text>
           <Text>Listen to your MoodTrack here:</Text>
 
           <View style={styles.platformContainer}>
@@ -131,7 +172,7 @@ const styles = StyleSheet.create({
     flex: 2,
     backgroundColor: '#fff',
     width: Dimensions.get('window').width - 50,
-    marginBottom: 50,
+    marginBottom: 30,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -166,9 +207,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   songReason: {
-    paddingTop: 20,
     textAlign: 'center',
-    paddingBottom: 20,
     fontSize: 12,
     fontStyle: 'italic',
   },
@@ -177,6 +216,7 @@ const styles = StyleSheet.create({
     width: 100,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
     marginBottom: 20,
   },
   platformContainer: {
