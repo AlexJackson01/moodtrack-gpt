@@ -10,6 +10,7 @@ import MoodInputScreen from './screens/MoodInputScreen';
 import TrackScreen from './screens/TrackScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import LatestSongsScreen from './screens/LatestSongsScreen';
+import ChartsScreen from './screens/ChartsScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -47,6 +48,11 @@ const NavTabs = () => {
         name='Latest'
         options={{ headerShown: false }}
         component={LatestSongsScreen}
+      />
+            <Tab.Screen
+        name='Moods'
+        options={{ headerShown: false }}
+        component={ChartsScreen}
       />
     </Tab.Navigator>
   )
