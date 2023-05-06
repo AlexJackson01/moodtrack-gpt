@@ -5,72 +5,41 @@ import {useEffect, useState} from 'react';
 import {Button} from 'react-native-paper';
 
 const MoodCharts = ({moods}) => {
+  const [chartFilter, setChartFilter] = useState();
 
-    const [sadHappy, setSadHappy] = useState([
-        {value: Number(moods[0].sadhappy)},
-        {value: Number(moods[1].sadhappy)},
-        {value: Number(moods[2].sadhappy)},
-        {value: Number(moods[0].sadhappy)},
-        {value: Number(moods[1].sadhappy)},
-        {value: Number(moods[2].sadhappy)},
-        {value: Number(moods[0].sadhappy)},
-    ])
+  const [sadHappy, setSadHappy] = useState([
+    {value: Number(moods[0].sadhappy)},
+    {value: Number(moods[1].sadhappy)},
+    {value: Number(moods[2].sadhappy)},
+    {value: Number(moods[0].sadhappy)},
+    {value: Number(moods[1].sadhappy)},
+    {value: Number(moods[2].sadhappy)},
+    {value: Number(moods[0].sadhappy)},
+  ]);
 
-    const [stressedRelaxed, SetStressedRelaxed] = useState([
-     {
-      value: Number(moods[0].stressedrelaxed),
-    },
-    {
-      value: Number(moods[1].stressedrelaxed),
-    },
-    {
-      value: Number(moods[2].stressedrelaxed),
-    },
-    {
-      value: Number(moods[0].stressedrelaxed),
-    },
-    {
-      value: Number(moods[1].stressedrelaxed),
-    },
-    {
-      value: Number(moods[2].stressedrelaxed),
-    },
-    {
-      value: Number(moods[0].stressedrelaxed),
-    },
-    ])
-    
-    const [tiredEnergetic, SetTiredEnergetic] = useState([
-     {
-      value: Number(moods[0].tiredenergetic),
-    },
-    {
-      value: Number(moods[1].tiredenergetic),
-    },
-    {
-      value: Number(moods[2].tiredenergetic),
-    },
-    {
-      value: Number(moods[0].tiredenergetic),
-    },
-    {
-      value: Number(moods[1].tiredenergetic),
-    },
-    {
-      value: Number(moods[2].tiredenergetic),
-    },
-    {
-      value: Number(moods[0].tiredenergetic),
-    },
-    ])
+  const [stressedRelaxed, SetStressedRelaxed] = useState([
+    {value: Number(moods[0].stressedrelaxed)},
+    {value: Number(moods[1].stressedrelaxed)},
+    {value: Number(moods[2].stressedrelaxed)},
+    {value: Number(moods[0].stressedrelaxed)},
+    {value: Number(moods[1].stressedrelaxed)},
+    {value: Number(moods[2].stressedrelaxed)},
+    {value: Number(moods[0].stressedrelaxed)},
+  ]);
 
+  const [tiredEnergetic, SetTiredEnergetic] = useState([
+    {value: Number(moods[0].tiredenergetic)},
+    {value: Number(moods[1].tiredenergetic)},
+    {value: Number(moods[2].tiredenergetic)},
+    {value: Number(moods[0].tiredenergetic)},
+    {value: Number(moods[1].tiredenergetic)},
+    {value: Number(moods[2].tiredenergetic)},
+    {value: Number(moods[0].tiredenergetic)},
+  ]);
 
-
-
-useEffect(() => {
-    console.log(moods)
-}, []);
-
+  useEffect(() => {
+    console.log(moods);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -90,9 +59,9 @@ useEffect(() => {
       </Text>
 
       <View style={{backgroundColor: 'lightgrey', padding: 5}}>
-        {moods && (
+        {moods && !chartFilter ? (
           <LineChart
-            initialSpacing={0}
+            initialSpacing={20}
             data={sadHappy}
             data2={stressedRelaxed}
             data3={tiredEnergetic}
@@ -104,18 +73,94 @@ useEffect(() => {
             dataPointsColor3="#198699"
             thickness={3}
             hideRules
-            hideYAxisText
             isAnimated
             yAxisColor="#000"
             showVerticalLines
-            verticalLinesColor="#000"
+            width={220}
+            verticalLinesColor="grey"
             xAxisColor="#000"
             color1="#9155d4"
             color2="#5a6db7"
             color3="#198699"
           />
+        ) : (
+          <LineChart
+            initialSpacing={20}
+            data={chartFilter}
+            spacing={30}
+            dataPointsHeight={10}
+            dataPointsWidth={10}
+            dataPointsColor={
+              chartFilter === sadHappy
+                ? '#9155d4'
+                : chartFilter === stressedRelaxed
+                ? '#5a6db7'
+                : chartFilter === tiredEnergetic
+                ? '#198699'
+                : null
+            }
+            thickness={3}
+            hideRules
+            isAnimated
+            yAxisColor="#000"
+            showVerticalLines
+            width={220}
+            verticalLinesColor="grey"
+            xAxisColor="#000"
+            color={
+              chartFilter === sadHappy
+                ? '#9155d4'
+                : chartFilter === stressedRelaxed
+                ? '#5a6db7'
+                : chartFilter === tiredEnergetic
+                ? '#198699'
+                : null
+            }
+          />
         )}
       </View>
+
+      <View style={styles.chartFilters}>
+        <Button
+          mode="text"
+          textColor="#9155d4"
+          labelStyle={{
+            fontSize: 10,
+            backgroundColor: chartFilter === sadHappy ? 'lightgrey' : null,
+          }}
+          onPress={() => setChartFilter(sadHappy)}>
+          Sad / Happy
+        </Button>
+        <Button
+          mode="text"
+          textColor="#5a6db7"
+          labelStyle={{
+            fontSize: 10,
+            backgroundColor:
+              chartFilter === stressedRelaxed ? 'lightgrey' : null,
+          }}
+          onPress={() => setChartFilter(stressedRelaxed)}>
+          Stressed / Relaxed
+        </Button>
+        <Button
+          mode="text"
+          textColor="#198699"
+          labelStyle={{
+            fontSize: 10,
+            backgroundColor:
+              chartFilter === tiredEnergetic ? 'lightgrey' : null,
+          }}
+          onPress={() => setChartFilter(tiredEnergetic)}>
+          Tired / Energetic
+        </Button>
+      </View>
+      <Button
+        mode="text"
+        textColor="grey"
+        labelStyle={{fontSize: 10, textDecorationLine: 'underline'}}
+        onPress={() => setChartFilter(null)}>
+        Clear Filters
+      </Button>
     </View>
   );
 };
@@ -148,6 +193,10 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     paddingTop: 10,
+  },
+  chartFilters: {
+    display: 'flex',
+    flexDirection: 'row',
   },
 });
 export default MoodCharts;
