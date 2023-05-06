@@ -18,9 +18,7 @@ import Video from 'react-native-video';
 import Music from '../../assets/videos/music.mp4';
 import Icon from 'react-native-vector-icons/FontAwesome';
 const qs = require('qs');
-import { Buffer } from "buffer";
-
-
+import {Buffer} from 'buffer';
 
 import {useState, useEffect} from 'react';
 
@@ -49,7 +47,10 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     },
   ]);
 
-  const auth_token = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`, 'utf-8').toString('base64');
+  const auth_token = Buffer.from(
+    `${CLIENT_ID}:${CLIENT_SECRET}`,
+    'utf-8',
+  ).toString('base64');
 
   useEffect(() => {
     generatePrompt();
@@ -80,7 +81,10 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     );
     console.log(completion);
     let res = completion.data.choices[0].text;
-    let song = res.replaceAll('"', '').substring(res.indexOf('"') - 1, res.indexOf('. ')).replaceAll('.', '');
+    let song = res
+      .replaceAll('"', '')
+      .substring(res.indexOf('"') - 1, res.indexOf('. '))
+      .replaceAll('.', '');
     let reason = res.substring(res.indexOf(':') + 2);
     let songLink = song.replaceAll('"', '').replaceAll("'", '').split(' ');
     console.log(songLink);
@@ -93,32 +97,33 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
     findAlbumCover(song);
   };
 
-
-  const findAlbumCover = async (song) => {
-
-    const data = qs.stringify({'grant_type': 'client_credentials'})    
-    const res = await axios.post('https://accounts.spotify.com/api/token', data, {
-      headers: {
-        'Authorization': `Basic ${auth_token}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
+  const findAlbumCover = async song => {
+    const data = qs.stringify({grant_type: 'client_credentials'});
+    const res = await axios.post(
+      'https://accounts.spotify.com/api/token',
+      data,
+      {
+        headers: {
+          Authorization: `Basic ${auth_token}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       },
-    })
+    );
 
     const res2 = await axios.get('https://api.spotify.com/v1/search', {
       headers: {
-        Authorization: `Bearer ${res.data.access_token}`
+        Authorization: `Bearer ${res.data.access_token}`,
       },
       params: {
         type: 'album',
         q: song,
-        limit: 1
-      }
-    })
+        limit: 1,
+      },
+    });
 
-    setSongImg(res2.data.albums.items[0].images[0])
-    console.log(songImg)
-  }
-
+    setSongImg(res2.data.albums.items[0].images[0]);
+    console.log(songImg);
+  };
 
   return (
     <View style={styles.container}>
@@ -130,7 +135,10 @@ const TrackGPT = ({navigation, sadHappy, stressedRelaxed, tiredEnergetic}) => {
 
       {songImg ? (
         <>
-          <Image source={{ uri: songImg.url}} style={{width: 100, height: 100}} />
+          <Image
+            source={{uri: songImg.url}}
+            style={{width: 100, height: 100}}
+          />
           <Text style={styles.songTitle}>{song}</Text>
           <Text style={styles.songReason}>{reason}</Text>
           <Video
@@ -172,7 +180,7 @@ const styles = StyleSheet.create({
     flex: 2,
     backgroundColor: '#fff',
     width: Dimensions.get('window').width - 50,
-    marginBottom: 30,
+    marginBottom: 20,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
@@ -210,7 +218,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12,
     fontStyle: 'italic',
-    paddingTop: 10
+    paddingTop: 10,
   },
   video: {
     height: 50,

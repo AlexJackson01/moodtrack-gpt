@@ -9,6 +9,7 @@ import LandingScreen from './screens/LandingScreen';
 import MoodInputScreen from './screens/MoodInputScreen';
 import TrackScreen from './screens/TrackScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
+import LatestSongsScreen from './screens/LatestSongsScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -42,28 +43,11 @@ const NavTabs = () => {
         options={{ headerShown: false }}
         component={TrackScreen}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name='Latest'
         options={{ headerShown: false }}
-        children={() => (
-          <LatestSongs
-            setUserId={setUserId}
-            userId={userId}
-            setUserName={setUserName}
-            userName={userName}
-          />
-        )}
+        component={LatestSongsScreen}
       />
-      <Tab.Screen
-        name='Moods'
-        options={{ headerShown: false }}
-        children={() => (
-          <Moods
-            userId={userId}
-            userName={userName}
-          />
-        )}
-      /> */}
     </Tab.Navigator>
   )
 }
