@@ -1,4 +1,11 @@
-import {Dimensions, SafeAreaView, StyleSheet, Text, View, Image} from 'react-native';
+import {
+  Dimensions,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+} from 'react-native';
 import {useEffect, useState} from 'react';
 import {createClient} from '@supabase/supabase-js';
 import {SUPABASE_ANON_KEY} from '@env';
@@ -11,16 +18,47 @@ const supabase = createClient(
 );
 
 const ChartsScreen = () => {
-  const [moods, setMoods] = useState(null);
+  const [sadHappy, setSadHappy] = useState();
+  const [stressedRelaxed, setStressedRelaxed] = useState();
+  const [tiredEnergetic, setTiredEnergetic] = useState();
+
+  const getMoods = async () => {
+    const {data} = await supabase.from('moods').select();
+
+    setSadHappy([
+      {value: Number(data[0].sadhappy)},
+      {value: Number(data[1].sadhappy)},
+      {value: Number(data[2].sadhappy)},
+      {value: Number(data[0].sadhappy)},
+      {value: Number(data[1].sadhappy)},
+      {value: Number(data[2].sadhappy)},
+      {value: Number(data[0].sadhappy)},
+    ]);
+
+    setStressedRelaxed([
+      {value: Number(data[0].stressedrelaxed)},
+      {value: Number(data[1].stressedrelaxed)},
+      {value: Number(data[2].stressedrelaxed)},
+      {value: Number(data[0].stressedrelaxed)},
+      {value: Number(data[1].stressedrelaxed)},
+      {value: Number(data[2].stressedrelaxed)},
+      {value: Number(data[0].stressedrelaxed)},
+    ]);
+
+    setTiredEnergetic([
+      {value: Number(data[0].tiredenergetic)},
+      {value: Number(data[1].tiredenergetic)},
+      {value: Number(data[2].tiredenergetic)},
+      {value: Number(data[0].tiredenergetic)},
+      {value: Number(data[1].tiredenergetic)},
+      {value: Number(data[2].tiredenergetic)},
+      {value: Number(data[0].tiredenergetic)},
+    ]);
+  };
 
   useEffect(() => {
     getMoods();
   }, []);
-
-  const getMoods = async () => {
-    const {data} = await supabase.from('moods').select();
-    setMoods(data);
-  };
 
   return (
     <LinearGradient
@@ -34,10 +72,11 @@ const ChartsScreen = () => {
           />
         </View>
 
-
-        <MoodCharts moods={moods} />
-
-
+        <MoodCharts
+          sadHappy={sadHappy}
+          stressedRelaxed={stressedRelaxed}
+          tiredEnergetic={tiredEnergetic}
+        />
       </SafeAreaView>
     </LinearGradient>
   );

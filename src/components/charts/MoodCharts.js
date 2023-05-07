@@ -4,41 +4,11 @@ import {LineChart} from 'react-native-gifted-charts';
 import {useEffect, useState} from 'react';
 import {Button} from 'react-native-paper';
 
-const MoodCharts = ({moods}) => {
+const MoodCharts = ({sadHappy, stressedRelaxed, tiredEnergetic}) => {
   const [chartFilter, setChartFilter] = useState();
-
-  const [sadHappy, setSadHappy] = useState([
-    {value: Number(moods[0].sadhappy)},
-    {value: Number(moods[1].sadhappy)},
-    {value: Number(moods[2].sadhappy)},
-    {value: Number(moods[0].sadhappy)},
-    {value: Number(moods[1].sadhappy)},
-    {value: Number(moods[2].sadhappy)},
-    {value: Number(moods[0].sadhappy)},
-  ]);
-
-  const [stressedRelaxed, SetStressedRelaxed] = useState([
-    {value: Number(moods[0].stressedrelaxed)},
-    {value: Number(moods[1].stressedrelaxed)},
-    {value: Number(moods[2].stressedrelaxed)},
-    {value: Number(moods[0].stressedrelaxed)},
-    {value: Number(moods[1].stressedrelaxed)},
-    {value: Number(moods[2].stressedrelaxed)},
-    {value: Number(moods[0].stressedrelaxed)},
-  ]);
-
-  const [tiredEnergetic, SetTiredEnergetic] = useState([
-    {value: Number(moods[0].tiredenergetic)},
-    {value: Number(moods[1].tiredenergetic)},
-    {value: Number(moods[2].tiredenergetic)},
-    {value: Number(moods[0].tiredenergetic)},
-    {value: Number(moods[1].tiredenergetic)},
-    {value: Number(moods[2].tiredenergetic)},
-    {value: Number(moods[0].tiredenergetic)},
-  ]);
-
+  
   useEffect(() => {
-    console.log(moods);
+    console.log(sadHappy);
   }, []);
 
   return (
@@ -59,7 +29,7 @@ const MoodCharts = ({moods}) => {
       </Text>
 
       <View style={{backgroundColor: 'lightgrey', padding: 5}}>
-        {moods && !chartFilter ? (
+        {sadHappy && !chartFilter ? (
           <LineChart
             initialSpacing={20}
             data={sadHappy}
